@@ -1,4 +1,4 @@
 locals {
-  ACCESS_KEY = "{{ env `ACCESS_KEY` }}"
-  SECRET_KEY = "{{ env `SECRET_KEY` }}"
+  LIGHTSAIL_ACCESS_KEY = "{{ env `LIGHTSAIL_ACCESS_KEY` }}"
+  LIGHTSAIL_SECRET_KEY = "{{ env `LIGHTSAIL_SECRET_KEY` }}"
 }
