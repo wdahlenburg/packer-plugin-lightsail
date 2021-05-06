@@ -1,4 +1,4 @@
 locals {
-  foo = data.scaffolding-my-datasource.mock-data.foo
-  bar = data.scaffolding-my-datasource.mock-data.bar
+  ACCESS_KEY = "{{ env `ACCESS_KEY` }}"
+  SECRET_KEY = "{{ env `SECRET_KEY` }}"
 }
