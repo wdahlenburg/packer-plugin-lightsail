@@ -62,7 +62,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			Host:      communicator.CommHost(b.config.Comm.Host(), "server_ip"),
 			SSHConfig: b.config.Comm.SSHConfigFunc(),
 		},
-		new(commonsteps.StepProvision),
+		&commonsteps.StepProvision{},
 		new(StepCreateSnapshot),
 		new(StepCloneSnapshot),
 		&commonsteps.StepCleanupTempKeys{Comm: &b.config.Comm},

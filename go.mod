@@ -16,7 +16,6 @@ require (
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/hashicorp/consul/api v1.8.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-getter/v2 v2.0.0 // indirect
 	github.com/hashicorp/go-hclog v0.16.0 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.0 // indirect
