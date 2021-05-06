@@ -25,7 +25,7 @@ var (
 
 func main() {
 	pps := plugin.NewSet()
-	pps.RegisterBuilder("lightsail", new(scaffolding.Builder))
+	pps.RegisterBuilder("lightsail", new(lightsail.Builder))
 	pps.SetVersion(PluginVersion)
 	err := pps.Run()
 	if err != nil {

@@ -10,35 +10,27 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/hashicorp/packer-plugin-sdk/common"
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/hashicorp/packer-plugin-sdk/template/config"
 )
 
 const BuilderId = "lightsail.builder"
 
-type Config struct {
-	common.PackerConfig `mapstructure:",squash"`
-	MockOption          string `mapstructure:"mock"`
-}
-
 type Builder struct {
-	config Config
+	config *Config
 	runner multistep.Runner
 }
 
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
 func (b *Builder) Prepare(raws ...interface{}) (generatedVars []string, warnings []string, err error) {
-	err = config.Decode(&b.config, &config.DecodeOpts{
-		PluginType:  "packer.builder.lightsail",
-		Interpolate: true,
-	}, raws...)
+	b.config, err = NewConfig(raws...)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed loading config: %w", err)
 	}
+
 	// Return the placeholder for the generated data that will become available to provisioners and post-processors.
 	// If the builder doesn't generate any data, just return an empty slice of string: []string{}
 	buildGeneratedData := []string{""}
@@ -62,7 +54,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	ui.Say("Starting lightsail builder")
 
 	steps := []multistep.Step{
-		&StepKeyPair{DebugMode: b.config.PackerDebug, DebugKeyPath: fmt.Sprintf("ls_%s.pem",
+		&StepCreateKeyPair{DebugMode: b.config.PackerDebug, DebugKeyPath: fmt.Sprintf("ls_%s.pem",
 			b.config.PackerBuildName), Comm: &b.config.Comm},
 		new(StepCreateServer),
 		&communicator.StepConnect{
@@ -70,10 +62,10 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			Host:      communicator.CommHost(b.config.Comm.Host(), "server_ip"),
 			SSHConfig: b.config.Comm.SSHConfigFunc(),
 		},
-		new(common.StepProvision),
+		new(commonsteps.StepProvision),
 		new(StepCreateSnapshot),
 		new(StepCloneSnapshot),
-		&common.StepCleanupTempKeys{Comm: &b.config.Comm},
+		&commonsteps.StepCleanupTempKeys{Comm: &b.config.Comm},
 	}
 
 	// Run!

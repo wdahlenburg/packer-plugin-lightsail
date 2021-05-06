@@ -27,7 +27,7 @@ func (a *Artifact) Files() []string {
 	return []string{}
 }
 
-func (*Artifact) Id() string {
+func (a *Artifact) Id() string {
 	return fmt.Sprintf("%s:%s", strings.Join(a.RegionNames[:], ","), a.Name)
 }
 

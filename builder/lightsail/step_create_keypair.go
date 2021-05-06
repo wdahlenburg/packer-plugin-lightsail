@@ -17,14 +17,14 @@ import (
 )
 
 // This is a definition of a builder step and should implement multistep.Step
-type StepKeyPair struct {
+type StepCreateKeyPair struct {
 	DebugMode    bool
 	DebugKeyPath string
 	Comm         *communicator.Config
 }
 
 // Run should execute the purpose of this step
-func (s *StepCreateKeypair) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepCreateKeyPair) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 	config := state.Get("config").(Config)
 	creds := state.Get("creds").(credentials.Credentials)
@@ -86,4 +86,4 @@ func (s *StepCreateKeypair) Run(ctx context.Context, state multistep.StateBag) m
 
 // Cleanup can be used to clean up any artifact created by the step.
 // A step's clean up always run at the end of a build, regardless of whether provisioning succeeds or fails.
-func (s *StepCreateKeypair) Cleanup(_ multistep.StateBag) {}
+func (s *StepCreateKeyPair) Cleanup(_ multistep.StateBag) {}
