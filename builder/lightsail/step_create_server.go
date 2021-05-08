@@ -33,30 +33,31 @@ func (s *StepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 	newSession, err := session.NewSession(awsCfg)
 	if err != nil {
-		err = fmt.Errorf("failed setting up aws session: %v", newSession)
+		err = fmt.Errorf("Failed setting up aws session: %v", newSession)
 		return handleError(err, state)
 	}
 	lsClient := lightsail.New(newSession)
 
-	ui.Say(fmt.Sprintf("connected to AWS region -  \"%s\" ...", awsRegion))
+	ui.Say(fmt.Sprintf("Connected to AWS region -  \"%s\" ...", awsRegion))
 	tempInstanceName := fmt.Sprintf("%s-%s", config.SnapshotName, uuid.TimeOrderedUUID())
-	_, err = lsClient.CreateInstances(&lightsail.CreateInstancesInput{
+	output, err := lsClient.CreateInstances(&lightsail.CreateInstancesInput{
 		AvailabilityZone: aws.String(config.Regions[0]),
 		BlueprintId:      aws.String(config.Blueprint),
 		BundleId:         aws.String(config.BundleId),
 		InstanceNames:    []*string{aws.String(tempInstanceName)},
 		KeyPairName:      aws.String(keyPairName),
 	})
-	ui.Say(fmt.Sprintf("created lightsail instance -  \"%s\" ...", tempInstanceName))
+	ui.Say(fmt.Sprintf("Data from AWS: %s\n", output.GoString()))
+	ui.Say(fmt.Sprintf("Created lightsail instance -  \"%s\" ...", tempInstanceName))
 
 	var lsInstance *lightsail.GetInstanceOutput
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(60 * time.Second)
 	for {
 		select {
 		case <-ticker.C:
 			lsInstance, err = lsClient.GetInstance(&lightsail.GetInstanceInput{InstanceName: aws.String(tempInstanceName)})
 			if err != nil {
-				err = fmt.Errorf("failed creating instance: %w", err)
+				err = fmt.Errorf("Failed creating instance: %w", err)
 				return handleError(err, state)
 			}
 			state.Put("server_details", *lsInstance)
@@ -66,7 +67,7 @@ func (s *StepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 			break
 		case <-ctx.Done():
 			ticker.Stop()
-			err = fmt.Errorf("failed creating instance: %w", err)
+			err = fmt.Errorf("Failed creating instance: %w", err)
 			return handleError(ctx.Err(), state)
 		}
 		break
