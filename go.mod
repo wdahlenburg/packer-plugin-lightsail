@@ -22,10 +22,9 @@ require (
 	github.com/hashicorp/go-version v1.3.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl/v2 v2.10.0
-	github.com/hashicorp/packer-plugin-sdk v0.2.0
+	github.com/hashicorp/packer-plugin-sdk v0.2.2
 	github.com/hashicorp/vault/api v1.1.0 // indirect
 	github.com/hashicorp/vault/sdk v0.2.0 // indirect
-	github.com/masterzen/winrm v0.0.0-20210504160029-28ed956f5227 // indirect
 	github.com/mitchellh/go-fs v0.0.0-20180402235330-b7b9ca407fff // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
